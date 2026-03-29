@@ -12,29 +12,38 @@ const listings = [
 
 const MarketplacePage = () => {
   return (
-    <div className="max-w-5xl mx-auto space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Marketplace</h1>
-        <Button variant="hero" size="sm"><ShoppingBag className="h-4 w-4 mr-1" /> List Item</Button>
+    <div className="max-w-6xl mx-auto space-y-10">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+        <h1 className="text-4xl font-bold tracking-tight text-white">Marketplace</h1>
+        <Button size="lg" className="rounded-xl shadow-indigo-500/25">
+          <ShoppingBag className="h-5 w-5 mr-2" /> List an Item
+        </Button>
       </div>
 
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
         {listings.map((item) => (
-          <div key={item.id} className="bg-card rounded-xl border shadow-sm overflow-hidden hover:shadow-md transition-shadow group">
-            <div className="aspect-[4/3] bg-muted flex items-center justify-center">
-              <ShoppingBag className="h-10 w-10 text-muted-foreground/30" />
+          <div key={item.id} className="group bg-white/5 backdrop-blur-lg rounded-2xl border border-white/10 shadow-xl overflow-hidden transition-all duration-300 hover:scale-[1.03] hover:shadow-2xl hover:border-white/20">
+            <div className="aspect-[16/10] bg-gradient-to-br from-indigo-500/20 via-purple-500/10 to-transparent flex items-center justify-center relative overflow-hidden">
+              <ShoppingBag className="h-16 w-16 text-indigo-400/20 group-hover:scale-110 transition-transform duration-500" />
+              <div className="absolute top-4 right-4">
+                <span className="bg-white/10 backdrop-blur-md text-[10px] font-bold text-white px-3 py-1.5 rounded-lg border border-white/10 uppercase tracking-widest">
+                  {item.condition}
+                </span>
+              </div>
             </div>
-            <div className="p-4">
-              <div className="flex items-start justify-between mb-1">
-                <h3 className="font-semibold text-sm leading-snug">{item.title}</h3>
+            <div className="p-6">
+              <div className="mb-4">
+                <span className="text-[10px] font-bold text-indigo-400 uppercase tracking-widest mb-1 block">{item.category}</span>
+                <h3 className="font-bold text-xl text-white group-hover:text-indigo-300 transition-colors line-clamp-1">{item.title}</h3>
               </div>
-              <p className="text-lg font-bold text-primary mb-2">{item.price}</p>
-              <div className="flex items-center justify-between text-xs text-muted-foreground">
-                <span>{item.condition} · {item.category}</span>
-                <span>{item.seller}</span>
+              
+              <div className="flex items-center justify-between mb-6">
+                <p className="text-2xl font-black text-white">{item.price}</p>
+                <span className="text-xs font-bold text-gray-500">By {item.seller}</span>
               </div>
-              <Button variant="outline" size="sm" className="w-full mt-3">
-                <MessageCircle className="h-3.5 w-3.5 mr-1" /> Contact Seller
+
+              <Button variant="outline" size="sm" className="w-full rounded-xl border-white/10 hover:bg-white/10 font-bold py-6">
+                <MessageCircle className="h-4 w-4 mr-2 text-indigo-400" /> Contact Seller
               </Button>
             </div>
           </div>

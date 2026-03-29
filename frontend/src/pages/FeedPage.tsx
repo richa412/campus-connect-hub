@@ -11,21 +11,19 @@ const posts = [
 
 const FeedPage = () => {
   return (
-    <div className="max-w-2xl mx-auto space-y-6">
-      <h1 className="text-2xl font-bold">Feed</h1>
-
+    <div className="max-w-2xl mx-auto space-y-8">
       {/* Create post */}
-      <div className="bg-card rounded-xl border p-4 shadow-sm">
-        <div className="flex gap-3">
-          <div className="h-10 w-10 rounded-full gradient-primary flex items-center justify-center text-sm font-semibold text-primary-foreground shrink-0">AP</div>
+      <div className="bg-white/5 backdrop-blur-lg rounded-2xl border border-white/10 p-6 shadow-xl transition-all duration-200 hover:scale-[1.01]">
+        <div className="flex gap-4">
+          <div className="h-12 w-12 rounded-xl bg-indigo-500 flex items-center justify-center text-sm font-bold text-white shadow-lg shrink-0">AP</div>
           <div className="flex-1">
-            <div className="bg-muted rounded-lg px-4 py-2.5 text-sm text-muted-foreground cursor-pointer hover:bg-muted/80 transition-colors">
+            <div className="bg-white/10 rounded-xl px-5 py-3.5 text-sm text-gray-400 cursor-pointer hover:bg-white/15 transition-all duration-200 border border-white/5">
               What's happening on campus?
             </div>
-            <div className="flex items-center gap-2 mt-3">
-              <Button variant="ghost" size="sm" className="text-muted-foreground"><ImageIcon className="h-4 w-4 mr-1" /> Photo</Button>
+            <div className="flex items-center gap-2 mt-4">
+              <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white"><ImageIcon className="h-4 w-4 mr-2" /> Photo</Button>
               <div className="flex-1" />
-              <Button variant="hero" size="sm">Post</Button>
+              <Button variant="default" size="sm">Post</Button>
             </div>
           </div>
         </div>
@@ -33,34 +31,34 @@ const FeedPage = () => {
 
       {/* Posts */}
       {posts.map((post) => (
-        <article key={post.id} className="bg-card rounded-xl border p-4 shadow-sm hover:shadow-md transition-shadow">
-          <div className="flex items-start gap-3">
-            <Avatar className="h-10 w-10">
-              <AvatarFallback className="gradient-primary text-primary-foreground text-xs font-semibold">{post.initials}</AvatarFallback>
+        <article key={post.id} className="bg-white/5 backdrop-blur-lg rounded-2xl border border-white/10 p-6 shadow-xl transition-all duration-200 hover:scale-[1.01]">
+          <div className="flex items-start gap-4">
+            <Avatar className="h-12 w-12 rounded-xl border border-white/10">
+              <AvatarFallback className="bg-indigo-500 text-white text-xs font-bold">{post.initials}</AvatarFallback>
             </Avatar>
             <div className="flex-1 min-w-0">
               <div className="flex items-center justify-between">
                 <div>
-                  <span className="font-semibold text-sm">{post.author}</span>
-                  <span className="text-muted-foreground text-xs ml-2">{post.campus} · {post.time}</span>
+                  <span className="font-bold text-base text-white">{post.author}</span>
+                  <span className="text-gray-400 text-xs ml-3">{post.campus} · {post.time}</span>
                 </div>
-                <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground"><MoreHorizontal className="h-4 w-4" /></Button>
+                <Button variant="ghost" size="icon" className="h-9 w-9 text-gray-400 hover:text-white"><MoreHorizontal className="h-5 w-5" /></Button>
               </div>
-              <p className="mt-1.5 text-sm leading-relaxed">{post.content}</p>
-              <div className="flex gap-2 mt-3 flex-wrap">
+              <p className="mt-2 text-base leading-relaxed text-gray-300">{post.content}</p>
+              <div className="flex gap-2 mt-4 flex-wrap">
                 {post.tags.map((tag) => (
-                  <span key={tag} className="text-xs bg-secondary text-secondary-foreground px-2.5 py-1 rounded-full font-medium">#{tag}</span>
+                  <span key={tag} className="text-xs bg-white/10 text-indigo-300 px-3 py-1.5 rounded-lg font-semibold border border-white/5">#{tag}</span>
                 ))}
               </div>
-              <div className="flex items-center gap-4 mt-3 pt-3 border-t">
-                <button className="flex items-center gap-1.5 text-muted-foreground text-sm hover:text-destructive transition-colors">
-                  <Heart className="h-4 w-4" /> {post.likes}
+              <div className="flex items-center gap-6 mt-5 pt-5 border-t border-white/10">
+                <button className="flex items-center gap-2 text-gray-400 text-sm font-medium hover:text-rose-400 transition-colors">
+                  <Heart className="h-5 w-5" /> {post.likes}
                 </button>
-                <button className="flex items-center gap-1.5 text-muted-foreground text-sm hover:text-primary transition-colors">
-                  <MessageCircle className="h-4 w-4" /> {post.comments}
+                <button className="flex items-center gap-2 text-gray-400 text-sm font-medium hover:text-indigo-400 transition-colors">
+                  <MessageCircle className="h-5 w-5" /> {post.comments}
                 </button>
-                <button className="flex items-center gap-1.5 text-muted-foreground text-sm hover:text-primary transition-colors ml-auto">
-                  <Share2 className="h-4 w-4" />
+                <button className="flex items-center gap-2 text-gray-400 text-sm font-medium hover:text-indigo-400 transition-colors ml-auto">
+                  <Share2 className="h-5 w-5" />
                 </button>
               </div>
             </div>
