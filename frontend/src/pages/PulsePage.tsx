@@ -18,81 +18,71 @@ const topDiscussions = [
 ];
 
 const SentimentIcon = ({ type }: { type: string }) => {
-  if (type === "positive") return <TrendingUp className="h-4 w-4 text-pulse-positive" />;
-  if (type === "negative") return <TrendingDown className="h-4 w-4 text-pulse-negative" />;
-  return <Minus className="h-4 w-4 text-pulse-neutral" />;
+  if (type === "positive") return <TrendingUp className="h-5 w-5 text-emerald-400" />;
+  if (type === "negative") return <TrendingDown className="h-5 w-5 text-rose-400" />;
+  return <Minus className="h-5 w-5 text-amber-400" />;
 };
 
 const PulsePage = () => {
   return (
-    <div className="max-w-5xl mx-auto space-y-6">
-      <div className="flex items-center gap-3">
-        <div className="h-10 w-10 rounded-lg gradient-primary flex items-center justify-center">
-          <Zap className="h-5 w-5 text-primary-foreground" />
+    <div className="max-w-6xl mx-auto space-y-10">
+      <div className="flex items-center gap-5">
+        <div className="h-14 w-14 rounded-2xl bg-indigo-500 flex items-center justify-center shadow-lg shadow-indigo-500/30">
+          <Zap className="h-7 w-7 text-white" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold">Campus Pulse</h1>
-          <p className="text-sm text-muted-foreground">Real-time insights from your campus</p>
+          <h1 className="text-4xl font-bold tracking-tight text-white">Campus Pulse</h1>
+          <p className="text-base text-gray-400 font-medium">Real-time AI-powered insights from your campus activity</p>
         </div>
       </div>
 
-      {/* Sentiment overview */}
-      <div className="grid sm:grid-cols-3 gap-4">
-        {[
-          { label: "Positive", value: sentimentData.positive, color: "text-pulse-positive", bg: "bg-pulse-positive/10" },
-          { label: "Neutral", value: sentimentData.neutral, color: "text-pulse-neutral", bg: "bg-pulse-neutral/10" },
-          { label: "Negative", value: sentimentData.negative, color: "text-pulse-negative", bg: "bg-pulse-negative/10" },
-        ].map((s) => (
-          <div key={s.label} className="bg-card rounded-xl border p-5 shadow-sm">
-            <p className="text-sm text-muted-foreground mb-1">{s.label} Sentiment</p>
-            <div className="flex items-end gap-2">
-              <span className={cn("text-3xl font-bold", s.color)}>{s.value}%</span>
-            </div>
-            <div className={cn("h-2 rounded-full mt-3", s.bg)}>
-              <div className={cn("h-full rounded-full", s.color.replace("text-", "bg-"))} style={{ width: `${s.value}%` }} />
-            </div>
-          </div>
-        ))}
-      </div>
-
-      <div className="grid lg:grid-cols-5 gap-6">
+      <div className="grid lg:grid-cols-5 gap-8">
         {/* Trending */}
-        <div className="lg:col-span-3 bg-card rounded-xl border shadow-sm">
-          <div className="p-5 border-b flex items-center gap-2">
-            <BarChart3 className="h-5 w-5 text-primary" />
-            <h2 className="font-semibold">Trending Topics</h2>
+        <div className="lg:col-span-3 bg-white/5 backdrop-blur-lg rounded-3xl border border-white/10 shadow-2xl overflow-hidden">
+          <div className="p-8 border-b border-white/10 flex items-center justify-between bg-white/5">
+            <div className="flex items-center gap-3">
+              <BarChart3 className="h-6 w-6 text-indigo-400" />
+              <h2 className="text-xl font-bold text-white">Trending Topics</h2>
+            </div>
+            <span className="text-[10px] font-bold text-indigo-400 uppercase tracking-widest bg-indigo-500/10 px-3 py-1.5 rounded-lg border border-indigo-500/20">Updated Live</span>
           </div>
-          <div className="divide-y">
+          <div className="divide-y divide-white/5">
             {trendingTopics.map((t, i) => (
-              <div key={t.topic} className="flex items-center gap-4 px-5 py-4 hover:bg-muted/50 transition-colors">
-                <span className="text-lg font-bold text-muted-foreground w-6">#{i + 1}</span>
+              <div key={t.topic} className="flex items-center gap-6 px-8 py-6 hover:bg-white/5 transition-all duration-200 group">
+                <span className="text-2xl font-black text-gray-700 w-10 group-hover:text-indigo-500/50 transition-colors">#{i + 1}</span>
                 <div className="flex-1 min-w-0">
-                  <p className="font-medium text-sm">{t.topic}</p>
-                  <p className="text-xs text-muted-foreground">{t.posts} posts</p>
+                  <p className="font-bold text-lg text-white mb-1 group-hover:text-indigo-300 transition-colors">{t.topic}</p>
+                  <p className="text-xs font-bold text-gray-500 uppercase tracking-widest">{t.posts} Social Mentions</p>
                 </div>
-                <SentimentIcon type={t.sentiment} />
-                <span className={cn("text-xs font-semibold",
-                  t.sentiment === "positive" ? "text-pulse-positive" :
-                  t.sentiment === "negative" ? "text-pulse-negative" : "text-pulse-neutral"
-                )}>{t.change}</span>
+                <div className="flex items-center gap-4">
+                  <SentimentIcon type={t.sentiment} />
+                  <span className={cn("text-sm font-black tracking-tight",
+                    t.sentiment === "positive" ? "text-emerald-400" :
+                    t.sentiment === "negative" ? "text-rose-400" : "text-amber-400"
+                  )}>{t.change}</span>
+                </div>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Top discussions */}
-        <div className="lg:col-span-2 bg-card rounded-xl border shadow-sm">
-          <div className="p-5 border-b flex items-center gap-2">
-            <MessageCircle className="h-5 w-5 text-primary" />
-            <h2 className="font-semibold">Hot Discussions</h2>
+        {/* Discussions */}
+        <div className="lg:col-span-2 bg-white/5 backdrop-blur-lg rounded-3xl border border-white/10 shadow-2xl overflow-hidden">
+          <div className="p-8 border-b border-white/10 flex items-center gap-3 bg-white/5">
+            <MessageCircle className="h-6 w-6 text-purple-400" />
+            <h2 className="text-xl font-bold text-white">Discussions</h2>
           </div>
-          <div className="divide-y">
+          <div className="divide-y divide-white/5">
             {topDiscussions.map((d) => (
-              <div key={d.title} className="px-5 py-4 hover:bg-muted/50 transition-colors cursor-pointer">
-                <p className="font-medium text-sm mb-2">{d.title}</p>
-                <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                  <span className="flex items-center gap-1"><MessageCircle className="h-3 w-3" />{d.replies}</span>
-                  <span className="flex items-center gap-1"><Users className="h-3 w-3" />{d.participants}</span>
+              <div key={d.title} className="px-8 py-8 hover:bg-white/5 transition-all duration-200 cursor-pointer group">
+                <p className="font-bold text-base text-white mb-4 group-hover:text-purple-300 transition-colors leading-relaxed">{d.title}</p>
+                <div className="flex items-center gap-6">
+                  <span className="flex items-center gap-2 text-xs font-bold text-gray-500 bg-white/5 px-3 py-1.5 rounded-lg border border-white/5">
+                    <MessageCircle className="h-4 w-4 text-purple-400" /> {d.replies} <span className="text-[10px] uppercase opacity-60">Replies</span>
+                  </span>
+                  <span className="flex items-center gap-2 text-xs font-bold text-gray-500 bg-white/5 px-3 py-1.5 rounded-lg border border-white/5">
+                    <Users className="h-4 w-4 text-emerald-400" /> {d.participants} <span className="text-[10px] uppercase opacity-60">Participants</span>
+                  </span>
                 </div>
               </div>
             ))}
