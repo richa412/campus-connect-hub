@@ -5,6 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Mail, Lock, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { supabase } from "@/lib/supabase";
+import { toast } from "sonner";
 
 const glassCard = "backdrop-blur-lg bg-white/5 border border-white/10 rounded-2xl shadow-xl";
 
@@ -22,12 +24,28 @@ function BrandMark({ className }: { className?: string }) {
 const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (email.trim()) {
+    if (!email || !password) return;
+
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) throw error;
+
+      toast.success("Welcome back!");
       navigate("/app");
+    } catch (error: any) {
+      toast.error(error.message || "Invalid email or password");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -72,21 +90,22 @@ const LoginPage = () => {
 
             <div className={cn("p-6 sm:p-8", glassCard)}>
               <h1 className="mb-1 text-2xl font-bold tracking-tight">Log in</h1>
-              <p className="mb-8 text-sm text-gray-400 sm:text-base">Enter your college email to continue</p>
+              <p className="mb-8 text-sm text-gray-400 sm:text-base">Enter your email to continue</p>
               <form onSubmit={handleLogin} className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="email" className="text-gray-300 font-bold text-xs uppercase tracking-widest">
-                    College Email
+                    Email Address
                   </Label>
                   <div className="relative">
                     <Mail className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
                     <Input
                       id="email"
                       type="email"
-                      placeholder="you@university.edu"
+                      placeholder="you@example.com"
                       className="h-14 border-white/10 bg-white/5 pl-12 text-white placeholder:text-gray-500 focus-visible:ring-indigo-500"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
+                      required
                     />
                   </div>
                 </div>
@@ -108,15 +127,17 @@ const LoginPage = () => {
                       className="h-14 border-white/10 bg-white/5 pl-12 text-white placeholder:text-gray-500 focus-visible:ring-indigo-500"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
+                      required
                     />
                   </div>
                 </div>
                 <Button
                   type="submit"
                   size="lg"
-                  className="w-full h-14 rounded-xl bg-indigo-500 px-6 py-3 text-base font-bold text-white shadow-xl shadow-indigo-500/25 transition-all duration-200 hover:scale-[1.02] hover:bg-indigo-600"
+                  disabled={loading}
+                  className="w-full h-14 rounded-xl bg-indigo-500 px-6 py-3 text-base font-bold text-white shadow-xl shadow-indigo-500/25 transition-all duration-200 hover:scale-[1.02] hover:bg-indigo-600 disabled:pointer-events-none disabled:opacity-50"
                 >
-                  Log in <ArrowRight className="ml-2 h-5 w-5" />
+                  {loading ? "Logging in..." : "Log in"} <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </form>
               <p className="mt-6 text-center text-sm text-gray-400">

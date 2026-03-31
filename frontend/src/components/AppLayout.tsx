@@ -4,6 +4,9 @@ import { Home, Zap, Calendar, Briefcase, ShoppingBag, MessageCircle, Bell, User,
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import { supabase } from "@/lib/supabase";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner"; 
 
 const navItems = [
   { to: "/app", icon: Home, label: "Feed", end: true },
@@ -19,6 +22,19 @@ const glassPanel =
 
 const AppLayout = () => {
   const location = useLocation();
+  const navigate = useNavigate(); // For redirect after logout
+
+const handleLogout = async () => {
+  try {
+    const { error } = await supabase.auth.signOut();
+    if (error) throw error;
+
+    toast.success("Logged out successfully!");
+    navigate("/"); // Redirect to landing page
+  } catch (error: any) {
+    toast.error(error.message || "Failed to log out");
+  }
+};
 
   return (
     <div className="relative flex min-h-screen overflow-hidden bg-gradient-to-br from-[#0b1120] via-[#1e293b] to-[#020617] text-white">
@@ -83,12 +99,13 @@ const AppLayout = () => {
             Profile
           </NavLink>
           <button
-            type="button"
-            className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left text-sm font-semibold text-gray-400 transition-all duration-200 hover:bg-white/10 hover:text-white hover:scale-[1.02]"
-          >
-            <LogOut className="h-[1.125rem] w-[1.125rem] shrink-0" aria-hidden />
-            Log out
-          </button>
+  type="button"
+  onClick={handleLogout}  // <-- attach the logout function here
+  className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left text-sm font-semibold text-gray-400 transition-all duration-200 hover:bg-white/10 hover:text-white hover:scale-[1.02]"
+>
+  <LogOut className="h-[1.125rem] w-[1.125rem] shrink-0" aria-hidden />
+  Log out
+</button>
         </div>
       </aside>
 
