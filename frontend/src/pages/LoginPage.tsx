@@ -13,7 +13,7 @@ const glassCard = "backdrop-blur-lg bg-white/5 border border-white/10 rounded-2x
 function BrandMark({ className }: { className?: string }) {
   return (
     <div className={cn("flex items-center gap-2", className)}>
-      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-white/15 bg-indigo-500 shadow-lg shadow-indigo-500/35 ring-1 ring-white/10">
+      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-white/15 bg-indigo-500 shadow-lg shadow-indigo-500/35 ring-1 ring-white/10">
         <span className="text-sm font-bold leading-none text-white">C</span>
       </div>
       <span className="text-lg font-semibold tracking-wide text-white">CampusPulse</span>

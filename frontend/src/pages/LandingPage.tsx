@@ -58,7 +58,7 @@ const LandingPage = () => {
             to="/"
             className="flex shrink-0 items-center gap-2 transition-opacity duration-200 hover:opacity-90"
           >
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-white/15 bg-indigo-500 shadow-lg shadow-indigo-500/35 ring-1 ring-white/10">
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-white/15 bg-indigo-500 shadow-lg shadow-indigo-500/35 ring-1 ring-white/10">
               <span className="text-sm font-bold leading-none text-white">C</span>
             </div>
             <span className="text-lg font-semibold tracking-wide text-white">CampusPulse</span>

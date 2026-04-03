@@ -1,6 +1,6 @@
-import { Heart, MessageCircle, Share2, MoreHorizontal, Image as ImageIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Image as ImageIcon, MoreHorizontal, Heart, MessageCircle, Share2 } from "lucide-react";
 
 const posts = [
   { id: 1, author: "Priya Sharma", initials: "PS", campus: "IIT Delhi", time: "12m ago", content: "Just finished the robotics hackathon — our team built an autonomous delivery bot in 36 hours! 🤖 Anyone else participating?", tags: ["hackathon", "robotics"], likes: 47, comments: 12 },
