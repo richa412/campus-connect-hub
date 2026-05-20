@@ -1,14 +1,7 @@
-import { Calendar, MapPin, Users, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { campusEvents } from "@/data/campusData";
 import { cn } from "@/lib/utils";
-
-const events = [
-  { id: 1, title: "Spring Hackathon 2026", date: "Apr 5–6", time: "9:00 AM", location: "Engineering Block A", attendees: 234, category: "Tech", rsvpd: false },
-  { id: 2, title: "Career Fair — Tech Edition", date: "Apr 12", time: "10:00 AM", location: "Main Auditorium", attendees: 512, category: "Career", rsvpd: true },
-  { id: 3, title: "Inter-College Debate Finals", date: "Apr 15", time: "2:00 PM", location: "Seminar Hall 3", attendees: 89, category: "Academic", rsvpd: false },
-  { id: 4, title: "Music Night — Acoustic Jam", date: "Apr 18", time: "7:00 PM", location: "Open Air Theatre", attendees: 345, category: "Cultural", rsvpd: false },
-  { id: 5, title: "Startup Pitch Day", date: "Apr 22", time: "11:00 AM", location: "Incubation Center", attendees: 156, category: "Entrepreneurship", rsvpd: true },
-];
+import { Calendar, Clock, MapPin, Users } from "lucide-react";
 
 const categoryColors: Record<string, string> = {
   Tech: "bg-indigo-500/20 text-indigo-300 border-indigo-500/30",
@@ -26,17 +19,27 @@ const EventsPage = () => {
         <Button size="lg" className="rounded-xl shadow-indigo-500/25">Create Event</Button>
       </div>
 
+      {campusEvents.length === 0 && (
+        <div className="bg-white/5 backdrop-blur-lg rounded-2xl border border-white/10 p-10 shadow-xl text-center">
+          <Calendar className="mx-auto h-10 w-10 text-indigo-300" />
+          <h2 className="mt-4 text-2xl font-bold text-white">No events posted yet</h2>
+          <p className="mx-auto mt-2 max-w-md text-sm text-gray-400">
+            Club meets, workshops, fests, and campus announcements will be listed here when organizers add them.
+          </p>
+        </div>
+      )}
+
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {events.map((event) => (
+        {campusEvents.map((event) => (
           <div key={event.id} className="group bg-white/5 backdrop-blur-lg rounded-2xl border border-white/10 shadow-xl overflow-hidden transition-all duration-300 hover:scale-[1.03] hover:shadow-2xl hover:border-white/20">
             <div className="h-24 bg-gradient-to-br from-indigo-500/40 via-purple-500/30 to-transparent relative overflow-hidden">
-               <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_120%,rgba(99,102,241,0.4),transparent)]" />
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_120%,rgba(99,102,241,0.4),transparent)]" />
             </div>
             <div className="p-6 -mt-12 relative z-10">
               <div className="flex items-start justify-between mb-4">
                 <span className={cn(
                   "text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-lg border",
-                  categoryColors[event.category] || "bg-white/10 text-gray-400 border-white/10"
+                  categoryColors[event.category] || "bg-white/10 text-gray-400 border-white/10",
                 )}>
                   {event.category}
                 </span>
@@ -50,15 +53,15 @@ const EventsPage = () => {
                 <div className="flex items-center gap-3"><Clock className="h-4 w-4 text-indigo-400/70" />{event.time}</div>
                 <div className="flex items-center gap-3"><MapPin className="h-4 w-4 text-indigo-400/70" />{event.location}</div>
               </div>
-              <Button 
-                variant={event.rsvpd ? "secondary" : "default"} 
-                size="sm" 
+              <Button
+                variant={event.rsvpd ? "secondary" : "default"}
+                size="sm"
                 className={cn(
                   "w-full mt-6 rounded-xl font-bold",
-                  event.rsvpd ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/30" : ""
+                  event.rsvpd ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/30" : "",
                 )}
               >
-                {event.rsvpd ? "RSVP'd ✓" : "RSVP"}
+                {event.rsvpd ? "RSVP'd" : "RSVP"}
               </Button>
             </div>
           </div>

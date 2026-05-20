@@ -1,14 +1,7 @@
-import { Briefcase, MapPin, Clock, Tag } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-
-const opportunities = [
-  { id: 1, title: "Frontend Intern — EdTech Startup", org: "LearnStack", type: "Internship", location: "Remote", deadline: "Apr 10", skills: ["React", "TypeScript", "Tailwind"] },
-  { id: 2, title: "Research Assistant — AI Lab", org: "CS Department", type: "Research", location: "On-campus", deadline: "Apr 8", skills: ["Python", "ML", "NLP"] },
-  { id: 3, title: "Campus Ambassador — Notion", org: "Notion", type: "Part-time", location: "Hybrid", deadline: "Apr 15", skills: ["Marketing", "Events", "Social Media"] },
-  { id: 4, title: "Open Source Contributor — Supabase", org: "Supabase", type: "Open Source", location: "Remote", deadline: "Ongoing", skills: ["PostgreSQL", "TypeScript", "Deno"] },
-  { id: 5, title: "Teaching Assistant — DSA", org: "CS Department", type: "TA", location: "On-campus", deadline: "Apr 5", skills: ["C++", "Algorithms", "Teaching"] },
-];
+import { Button } from "@/components/ui/button";
+import { opportunities } from "@/data/campusData";
+import { Briefcase, Clock, MapPin, Tag } from "lucide-react";
 
 const OpportunitiesPage = () => {
   return (
@@ -17,6 +10,16 @@ const OpportunitiesPage = () => {
         <h1 className="text-4xl font-bold tracking-tight text-white">Opportunities</h1>
         <Button size="lg" className="rounded-xl shadow-indigo-500/25">Post Opportunity</Button>
       </div>
+
+      {opportunities.length === 0 && (
+        <div className="bg-white/5 backdrop-blur-lg rounded-2xl border border-white/10 p-10 shadow-xl text-center">
+          <Briefcase className="mx-auto h-10 w-10 text-indigo-300" />
+          <h2 className="mt-4 text-2xl font-bold text-white">No opportunities posted yet</h2>
+          <p className="mx-auto mt-2 max-w-md text-sm text-gray-400">
+            Internships, research roles, open-source work, and campus jobs will show up here when they are published.
+          </p>
+        </div>
+      )}
 
       <div className="grid gap-6">
         {opportunities.map((opp) => (
@@ -31,23 +34,23 @@ const OpportunitiesPage = () => {
                     <Clock className="h-3.5 w-3.5" /> Deadline: {opp.deadline}
                   </span>
                 </div>
-                
+
                 <div>
                   <h3 className="text-2xl font-bold text-white group-hover:text-indigo-300 transition-colors mb-1">{opp.title}</h3>
                   <p className="text-lg font-medium text-gray-400 flex items-center gap-2">
-                    <Briefcase className="h-4 w-4 text-indigo-400/70" /> {opp.org} · <MapPin className="h-4 w-4 text-indigo-400/70" /> {opp.location}
+                    <Briefcase className="h-4 w-4 text-indigo-400/70" /> {opp.org} - <MapPin className="h-4 w-4 text-indigo-400/70" /> {opp.location}
                   </p>
                 </div>
 
                 <div className="flex flex-wrap gap-2">
-                  {opp.skills.map((s) => (
-                    <span key={s} className="text-xs bg-white/5 text-gray-300 px-3 py-1.5 rounded-lg font-bold border border-white/5 flex items-center gap-2">
-                      <Tag className="h-3 w-3 text-indigo-400" /> {s}
+                  {opp.skills.map((skill) => (
+                    <span key={skill} className="text-xs bg-white/5 text-gray-300 px-3 py-1.5 rounded-lg font-bold border border-white/5 flex items-center gap-2">
+                      <Tag className="h-3 w-3 text-indigo-400" /> {skill}
                     </span>
                   ))}
                 </div>
               </div>
-              
+
               <div className="shrink-0">
                 <Button size="lg" className="w-full md:w-auto px-10 rounded-xl font-bold shadow-indigo-500/20">Apply Now</Button>
               </div>

@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import {
-  Mail, Edit3, Plus, Image as ImageIcon, Zap, LayoutGrid,
+  Mail, Edit3, Plus, Image as ImageIcon, LayoutGrid,
   MoreVertical, Trash2, X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -14,8 +14,13 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 
-// ─── Canvas Crop Modal ────────────────────────────────────────────────────────
-// Zero external dependencies. Renders inside a Dialog so it layers correctly.
+type ProfilePost = {
+  id: string;
+  content: string | null;
+  image_url: string | null;
+  created_at: string;
+};
+
 const AvatarCropModal = ({
   imageSrc,
   onCancel,
@@ -29,17 +34,14 @@ const AvatarCropModal = ({
   const imgRef = useRef<HTMLImageElement | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // crop circle state (relative to canvas display coords)
   const [zoom, setZoom] = useState(1);
   const [offset, setOffset] = useState({ x: 0, y: 0 });
   const [dragging, setDragging] = useState(false);
   const dragStart = useRef({ mx: 0, my: 0, ox: 0, oy: 0 });
   const [applying, setApplying] = useState(false);
 
-  // canvas logical size
   const SIZE = 320;
 
-  // draw whenever state changes
   const draw = useCallback(() => {
     const canvas = canvasRef.current;
     const img = imgRef.current;
@@ -48,27 +50,22 @@ const AvatarCropModal = ({
 
     ctx.clearRect(0, 0, SIZE, SIZE);
 
-    // draw image centred + zoomed + offset
     const scale = zoom;
     const iw = img.naturalWidth * scale;
     const ih = img.naturalHeight * scale;
-    // base: centre image in canvas
     const baseX = (SIZE - iw) / 2;
     const baseY = (SIZE - ih) / 2;
     ctx.drawImage(img, baseX + offset.x, baseY + offset.y, iw, ih);
 
-    // dark overlay outside circle
     ctx.save();
     ctx.fillStyle = "rgba(0,0,0,0.55)";
     ctx.fillRect(0, 0, SIZE, SIZE);
-    // cut out circle
     ctx.globalCompositeOperation = "destination-out";
     ctx.beginPath();
     ctx.arc(SIZE / 2, SIZE / 2, SIZE / 2 - 4, 0, Math.PI * 2);
     ctx.fill();
     ctx.restore();
 
-    // redraw image clipped to circle (so it's sharp, not behind overlay)
     ctx.save();
     ctx.beginPath();
     ctx.arc(SIZE / 2, SIZE / 2, SIZE / 2 - 4, 0, Math.PI * 2);
@@ -76,7 +73,6 @@ const AvatarCropModal = ({
     ctx.drawImage(img, baseX + offset.x, baseY + offset.y, iw, ih);
     ctx.restore();
 
-    // circle border
     ctx.save();
     ctx.strokeStyle = "rgba(255,255,255,0.85)";
     ctx.lineWidth = 2.5;
@@ -86,12 +82,10 @@ const AvatarCropModal = ({
     ctx.restore();
   }, [zoom, offset]);
 
-  // load image once
   useEffect(() => {
     const img = new Image();
     img.onload = () => {
       imgRef.current = img;
-      // fit image to canvas initially
       const fit = Math.min(SIZE / img.naturalWidth, SIZE / img.naturalHeight);
       setZoom(fit);
       setOffset({ x: 0, y: 0 });
@@ -101,7 +95,6 @@ const AvatarCropModal = ({
 
   useEffect(() => { draw(); }, [draw]);
 
-  // pointer events for drag
   const getPos = (e: React.MouseEvent | React.TouchEvent) => {
     if ("touches" in e) {
       const t = e.touches[0];
@@ -127,19 +120,17 @@ const AvatarCropModal = ({
 
   const onPointerUp = () => setDragging(false);
 
-  // apply: export circular crop as blob
   const handleApply = async () => {
     const img = imgRef.current;
     if (!img) return;
     setApplying(true);
 
     const out = document.createElement("canvas");
-    const R = 256; // output size
+    const R = 256;
     out.width = R;
     out.height = R;
     const ctx = out.getContext("2d")!;
 
-    // same transform as preview but at R resolution
     const ratio = R / SIZE;
     const scale = zoom;
     const iw = img.naturalWidth * scale * ratio;
@@ -163,7 +154,6 @@ const AvatarCropModal = ({
 
   return (
     <div className="fixed inset-0 z-[200] flex flex-col items-center justify-center bg-black/90 backdrop-blur-sm">
-      {/* Header */}
       <div className="w-full max-w-sm flex items-center justify-between px-4 py-3 mb-4">
         <button
           onClick={onCancel}
@@ -181,7 +171,6 @@ const AvatarCropModal = ({
         </button>
       </div>
 
-      {/* Canvas */}
       <canvas
         ref={canvasRef}
         width={SIZE}
@@ -197,9 +186,8 @@ const AvatarCropModal = ({
         onTouchEnd={onPointerUp}
       />
 
-      {/* Zoom slider */}
       <div className="w-full max-w-sm flex items-center gap-3 px-6 mt-6">
-        <span className="text-gray-400 text-xs">−</span>
+        <span className="text-gray-400 text-xs">-</span>
         <input
           type="range"
           min={0.2}
@@ -211,17 +199,16 @@ const AvatarCropModal = ({
         />
         <span className="text-gray-400 text-xs">+</span>
       </div>
-      <p className="text-gray-500 text-xs mt-2">Drag to reposition · Slider to zoom</p>
+      <p className="text-gray-500 text-xs mt-2">Drag to reposition - Slider to zoom</p>
     </div>
   );
 };
 
-// ─── Post Card ────────────────────────────────────────────────────────────────
 const PostCard = ({
   post,
   onDelete,
 }: {
-  post: any;
+  post: ProfilePost;
   onDelete: (id: string) => void;
 }) => {
   const [expanded, setExpanded] = useState(false);
@@ -298,7 +285,6 @@ const PostCard = ({
   );
 };
 
-// ─── Create Post Dialog ───────────────────────────────────────────────────────
 const CreatePostDialog = ({
   open,
   onOpenChange,
@@ -401,14 +387,13 @@ const CreatePostDialog = ({
           disabled={!canPost || loading}
           className="bg-indigo-500 hover:bg-indigo-600 rounded-xl w-full h-12 font-bold text-base disabled:opacity-40"
         >
-          {loading ? "Posting..." : "Post to Campus Pulse"}
+          {loading ? "Posting..." : "Post to Feed"}
         </Button>
       </DialogFooter>
     </DialogContent>
   );
 };
 
-// ─── Profile Page ─────────────────────────────────────────────────────────────
 const ProfilePage = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -421,7 +406,7 @@ const ProfilePage = () => {
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isPostOpen, setIsPostOpen] = useState(false);
   const [isFabOpen, setIsFabOpen] = useState(false);
-  const [posts, setPosts] = useState<any[]>([]);
+  const [posts, setPosts] = useState<ProfilePost[]>([]);
 
   useEffect(() => {
     const loadProfile = async () => {
@@ -459,21 +444,18 @@ const ProfilePage = () => {
     else setPosts((prev) => prev.filter((p) => p.id !== postId));
   };
 
-  // When user picks a file → open crop modal
   const handleAvatarFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     setShowPhotoOptions(false);
     const reader = new FileReader();
     reader.onload = () => {
-      // Use FileReader so it works across all browsers without CORS issues
       setCropSrc(reader.result as string);
     };
     reader.readAsDataURL(file);
     e.target.value = "";
   };
 
-  // Upload cropped blob to Supabase
   const handleCropDone = async (blob: Blob) => {
     setCropSrc(null);
     const { data: userData } = await supabase.auth.getUser();
@@ -493,7 +475,6 @@ const ProfilePage = () => {
 
   return (
     <>
-      {/* Crop modal — portalled above everything */}
       {cropSrc && (
         <AvatarCropModal
           imageSrc={cropSrc}
@@ -505,7 +486,6 @@ const ProfilePage = () => {
       <div className="max-w-4xl mx-auto space-y-10 pb-20">
         <div className="bg-white/5 backdrop-blur-lg rounded-3xl border border-white/10 shadow-2xl overflow-hidden">
 
-          {/* Thin LinkedIn-style banner */}
           <div className="h-28 relative overflow-hidden"
             style={{
               background: "linear-gradient(120deg, #3730a3 0%, #6d28d9 50%, #1e1b4b 100%)",
@@ -520,9 +500,7 @@ const ProfilePage = () => {
           </div>
 
           <div className="px-8 pb-8 relative">
-            {/* Avatar + Edit Profile row */}
             <div className="flex items-end gap-4 -mt-12 mb-5">
-              {/* Round avatar */}
               <div className="relative shrink-0">
                 <div
                   className="h-24 w-24 rounded-full bg-indigo-600 flex items-center justify-center text-2xl font-bold text-white overflow-hidden"
@@ -533,7 +511,6 @@ const ProfilePage = () => {
                     : initials}
                 </div>
 
-                {/* Edit pencil */}
                 <button
                   onClick={() => setShowPhotoOptions((v) => !v)}
                   className="absolute bottom-0 right-0 bg-[#0b1120] border border-white/20 p-1.5 rounded-full hover:bg-white/10 transition-colors shadow-md"
@@ -541,7 +518,6 @@ const ProfilePage = () => {
                   <Edit3 className="h-3 w-3 text-white" />
                 </button>
 
-                {/* Dropdown */}
                 {showPhotoOptions && (
                   <div className="absolute top-28 left-0 bg-[#0b1120] border border-white/10 rounded-xl p-1.5 shadow-2xl w-52 z-50">
                     <label className="flex items-center gap-2.5 px-3 py-2.5 hover:bg-white/10 rounded-lg cursor-pointer text-sm text-white transition-colors">
@@ -574,7 +550,6 @@ const ProfilePage = () => {
 
               <div className="flex-1" />
 
-              {/* Edit Profile */}
               <div className="mb-1">
                 <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
                   <DialogTrigger asChild>
@@ -625,12 +600,11 @@ const ProfilePage = () => {
               </div>
             </div>
 
-            {/* Name / course / email */}
             <div className="mb-6">
               <h1 className="text-2xl font-bold text-white tracking-tight leading-tight">{name}</h1>
               {(course || year) && (
                 <p className="text-sm text-gray-400 mt-0.5">
-                  {course}{course && year ? " · " : ""}{year}
+                  {course}{course && year ? " - " : ""}{year}
                 </p>
               )}
               <div className="flex items-center gap-1.5 mt-2">
@@ -639,7 +613,6 @@ const ProfilePage = () => {
               </div>
             </div>
 
-            {/* Posts */}
             <div className="space-y-4">
               <div className="flex items-center gap-3">
                 <div className="h-9 w-9 rounded-xl bg-indigo-500/20 flex items-center justify-center border border-indigo-500/30">
@@ -668,7 +641,6 @@ const ProfilePage = () => {
           </div>
         </div>
 
-        {/* FAB */}
         <div className="fixed bottom-10 right-10 z-50 flex flex-col items-end gap-4">
           <Dialog open={isPostOpen} onOpenChange={setIsPostOpen}>
             {isFabOpen && (
@@ -679,10 +651,6 @@ const ProfilePage = () => {
                     <ImageIcon className="h-6 w-6 text-indigo-400" /> Post
                   </Button>
                 </DialogTrigger>
-                <Button onClick={() => setIsFabOpen(false)}
-                  className="bg-[#0b1120] backdrop-blur-md border border-white/10 text-white rounded-xl px-8 py-7 shadow-2xl hover:bg-white/10 flex items-center gap-3 font-bold text-lg">
-                  <Zap className="h-6 w-6 text-amber-400" /> Live
-                </Button>
               </div>
             )}
 

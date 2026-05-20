@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Mail, Lock, ArrowRight } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, getErrorMessage } from "@/lib/utils";
 import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
 
@@ -16,7 +16,7 @@ function BrandMark({ className }: { className?: string }) {
       <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-white/15 bg-indigo-500 shadow-lg shadow-indigo-500/35 ring-1 ring-white/10">
         <span className="text-sm font-bold leading-none text-white">C</span>
       </div>
-      <span className="text-lg font-semibold tracking-wide text-white">CampusPulse</span>
+      <span className="text-lg font-semibold tracking-wide text-white">Campus Connect</span>
     </div>
   );
 }
@@ -42,8 +42,8 @@ const LoginPage = () => {
 
       toast.success("Welcome back!");
       navigate("/app");
-    } catch (error: any) {
-      toast.error(error.message || "Invalid email or password");
+    } catch (error: unknown) {
+      toast.error(getErrorMessage(error, "Invalid email or password"));
     } finally {
       setLoading(false);
     }
@@ -67,7 +67,6 @@ const LoginPage = () => {
       </div>
 
       <div className="relative z-10 flex min-h-screen flex-col lg:flex-row">
-        {/* Left panel */}
         <div className="hidden items-center justify-center p-8 lg:flex lg:w-1/2 lg:p-12">
           <div className="w-full max-w-md space-y-6">
             <BrandMark />
@@ -78,7 +77,6 @@ const LoginPage = () => {
           </div>
         </div>
 
-        {/* Right panel */}
         <div className="flex flex-1 items-center justify-center p-6 sm:p-8">
           <div className="w-full max-w-sm">
             <Link

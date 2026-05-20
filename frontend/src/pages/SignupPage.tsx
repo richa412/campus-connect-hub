@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Mail, Lock, User, ArrowRight, KeyRound } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, getErrorMessage } from "@/lib/utils";
 import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
 import {
@@ -21,7 +21,7 @@ function BrandMark({ className }: { className?: string }) {
       <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-white/15 bg-indigo-500 shadow-lg shadow-indigo-500/35 ring-1 ring-white/10">
         <span className="text-sm font-bold leading-none text-white">C</span>
       </div>
-      <span className="text-lg font-semibold tracking-wide text-white">CampusPulse</span>
+      <span className="text-lg font-semibold tracking-wide text-white">Campus Connect</span>
     </div>
   );
 }
@@ -41,28 +41,25 @@ const SignupPage = () => {
   setLoading(true);
 
   try {
-    // Step 1: Check if the email already exists in Supabase
     const { data: exists, error: rpcError } = await supabase
       .rpc("check_user_exists", { email });
 
     if (rpcError) throw rpcError;
 
     if (exists) {
-      // Email exists → show message, DO NOT send OTP
       toast.error("User already exists! Please log in.");
     } else {
-      // Email does NOT exist → send OTP as usual
       const { error: otpError } = await supabase.auth.signInWithOtp({
         email,
-        options: { shouldCreateUser: true }, // safe to create new user now
+        options: { shouldCreateUser: true },
       });
       if (otpError) throw otpError;
 
       toast.success("Verification code sent to your email!");
-      setStep("otp"); // move to OTP input step
+      setStep("otp");
     }
-  } catch (error: any) {
-    toast.error(error.message || "Failed to send verification code");
+  } catch (error: unknown) {
+    toast.error(getErrorMessage(error, "Failed to send verification code"));
   } finally {
     setLoading(false);
   }
@@ -79,8 +76,8 @@ const SignupPage = () => {
 
       if (error) throw error;
       toast.success("Code resent successfully!");
-    } catch (error: any) {
-      toast.error(error.message || "Failed to resend code");
+    } catch (error: unknown) {
+      toast.error(getErrorMessage(error, "Failed to resend code"));
     } finally {
       setResending(false);
     }
@@ -101,7 +98,6 @@ const SignupPage = () => {
       if (error) throw error;
 
       if (data?.session) {
-        // Check if the user already has a name set in metadata
         const hasProfile = !!data.user?.user_metadata?.full_name;
 
         if (hasProfile) {
@@ -114,8 +110,8 @@ const SignupPage = () => {
       } else {
         throw new Error("Verification failed - no session established");
       }
-    } catch (error: any) {
-      toast.error(error.message || "Invalid or expired code");
+    } catch (error: unknown) {
+      toast.error(getErrorMessage(error, "Invalid or expired code"));
     } finally {
       setLoading(false);
     }
@@ -136,8 +132,8 @@ const SignupPage = () => {
 
       toast.success("Account created successfully!");
       navigate("/app");
-    } catch (error: any) {
-      toast.error(error.message || "Failed to complete profile");
+    } catch (error: unknown) {
+      toast.error(getErrorMessage(error, "Failed to complete profile"));
     } finally {
       setLoading(false);
     }
